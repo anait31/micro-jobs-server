@@ -18,7 +18,7 @@ app.use(cors(corsOptions))
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = "mongodb+srv://micro-jobs:dnNJRdxHah13fP0L@cluster0.nprls.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -41,6 +41,13 @@ async function run() {
 
         app.get("/jobs", async (req, res) => {
             const result = await jobCollections.find().toArray()
+            res.send(result)
+        })
+
+        app.get("/job/:id", async(req, res) => {
+            const id = req.params.id
+            const query = {_id: new ObjectId(id)}
+            const result = await jobCollections.findOne(query);
             res.send(result)
         })
 
