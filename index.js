@@ -44,11 +44,35 @@ async function run() {
             res.send(result)
         })
 
-        app.get("/job/:id", async(req, res) => {
+        app.get('/jobs/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = {
+                'buyer_email': email
+            };
+
+            try {
+                const result = await jobCollections.find(query).toArray();
+                res.send(result);
+                console.log(result);
+            } catch (err) {
+                console.error(err);
+                res.status(500).send('Error fetching data');
+            }
+        });
+
+
+        app.get("/job/:id", async (req, res) => {
             const id = req.params.id
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await jobCollections.findOne(query);
             res.send(result)
+        })
+
+        app.post("/bids", async (req, res) => {
+            const bid = req.body;
+            console.log(bid)
+            const result = await bidsCollections.insertOne(bid);
+            res.send(result);
         })
 
         // Send a ping to confirm a successful connection
