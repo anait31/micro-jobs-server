@@ -9,7 +9,7 @@ const app = express()
 
 // Middleware
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'https://micro-jobs-auth.web.app'],
     credentials: true,
     optionSuccessStatus: 200,
 }
@@ -66,6 +66,12 @@ async function run() {
             const query = { _id: new ObjectId(id) }
             const result = await jobCollections.findOne(query);
             res.send(result)
+        })
+
+        app.post('/jobs', async (req, res) => {
+            const job = req.body;
+            const resut = await jobCollections.insertOne(job);
+            res.send(resut)
         })
 
         app.post("/bids", async (req, res) => {
