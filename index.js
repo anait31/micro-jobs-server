@@ -40,7 +40,13 @@ async function run() {
         // await client.connect();
 
         app.get("/jobs", async (req, res) => {
-            const result = await jobCollections.find().toArray()
+            console.log(req.query)
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size)
+            const result = await jobCollections.find()
+            .skip(page * size)
+            .limit(size)
+            .toArray()
             res.send(result)
         })
 
@@ -59,6 +65,11 @@ async function run() {
                 res.status(500).send('Error fetching data');
             }
         });
+
+        app.get('/paginations', async(req, res) => {
+            const count = await jobCollections.estimatedDocumentCount()
+            res.send({count})
+        })
 
 
         app.get("/job/:id", async (req, res) => {
@@ -82,7 +93,7 @@ async function run() {
         })
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
